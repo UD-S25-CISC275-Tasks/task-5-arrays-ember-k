@@ -5,7 +5,13 @@
  * the number twice.
  */
 export function bookEndList(numbers: number[]): number[] {
-    return numbers;
+    let numbersClone: number[] = [...numbers];
+    if (numbersClone.length < 1) {
+        return [];
+    } else if (numbersClone.length === 1) {
+        return [...numbersClone, ...numbersClone];
+    }
+    return [numbersClone[0], numbersClone[numbersClone.length - 1]];
 }
 
 /**
@@ -13,7 +19,7 @@ export function bookEndList(numbers: number[]): number[] {
  * number has been tripled (multiplied by 3).
  */
 export function tripleNumbers(numbers: number[]): number[] {
-    return numbers;
+    return numbers.map((num: number): number => num * 3);
 }
 
 /**
@@ -21,7 +27,9 @@ export function tripleNumbers(numbers: number[]): number[] {
  * the number cannot be parsed as an integer, convert it to 0 instead.
  */
 export function stringsToIntegers(numbers: string[]): number[] {
-    return [];
+    return numbers.map((num: string): number =>
+        Number.isNaN(Number(num)) ? 0 : Number(num),
+    );
 }
 
 /**
@@ -32,7 +40,12 @@ export function stringsToIntegers(numbers: string[]): number[] {
  */
 // Remember, you can write functions as lambdas too! They work exactly the same.
 export const removeDollars = (amounts: string[]): number[] => {
-    return [];
+    let noDollar: string[] = amounts.map((str: string): string =>
+        Number(str.startsWith("$")) ? str.slice(1) : str,
+    );
+    return noDollar.map((num: string): number =>
+        Number.isNaN(Number(num)) ? 0 : Number(num),
+    );
 };
 
 /**
@@ -41,15 +54,24 @@ export const removeDollars = (amounts: string[]): number[] => {
  * in question marks ("?").
  */
 export const shoutIfExclaiming = (messages: string[]): string[] => {
-    return [];
+    let noQuestions: string[] = messages.filter(
+        (message: string): boolean => !message.endsWith("?"),
+    );
+    return noQuestions.map((message: string): string =>
+        message.endsWith("!") ? message.toUpperCase() : message,
+    );
 };
 
 /**
  * Consumes an array of words and returns the number of words that are LESS THAN
  * 4 letters long.
  */
+// Credit: Asked ChatGPT if a condition could be put inside the reduce function (and asked about syntax for that)
 export function countShortWords(words: string[]): number {
-    return 0;
+    return words.reduce(
+        (count: number, word: string) => (word.length < 4 ? count + 1 : count),
+        0,
+    );
 }
 
 /**
@@ -58,7 +80,10 @@ export function countShortWords(words: string[]): number {
  * then return true.
  */
 export function allRGB(colors: string[]): boolean {
-    return false;
+    return colors.every(
+        (color: string): boolean =>
+            color === "red" || color === "blue" || color === "green",
+    );
 }
 
 /**
@@ -69,7 +94,8 @@ export function allRGB(colors: string[]): boolean {
  * And the array [] would become "0=0".
  */
 export function makeMath(addends: number[]): string {
-    return "";
+    let sum = addends.reduce((total: number, num: number) => total + num, 0);
+    return addends.length === 0 ? "0=0" : `${sum}=` + addends.join("+");
 }
 
 /**
@@ -81,6 +107,20 @@ export function makeMath(addends: number[]): string {
  * For instance, the array [1, 9, -5, 7] would become [1, 9, -5, 10, 7]
  * And the array [1, 9, 7] would become [1, 9, 7, 17]
  */
+// Credit: Asked chatGPT if reduce() can keep track of indexes
 export function injectPositive(values: number[]): number[] {
-    return [];
+    let negativeIndex = values.findIndex((num: number): boolean => num < 0);
+    let sum = values.reduce(
+        (sumPreNegative: number, num: number, index: number) =>
+            negativeIndex === -1 || index < negativeIndex ?
+                sumPreNegative + num
+            :   sumPreNegative,
+        0,
+    );
+    if (negativeIndex === -1) {
+        return [...values, sum];
+    }
+    let insertedSum = [...values];
+    insertedSum.splice(negativeIndex + 1, 0, sum);
+    return insertedSum;
 }
